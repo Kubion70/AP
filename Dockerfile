@@ -3,7 +3,11 @@ WORKDIR /app
 
 # Copy csproj and restore as distinct layers
 COPY . ./
-RUN dotnet restore **/
+RUN dotnet restore
+
+RUN dotnet ef migrations add $(date '+%d%m%Y%H') --startup-project AP.Repositories --project AP.Repositories
+
+RUN dotnet ef database update --startup-project AP.Repositories --project AP.Repositories
 
 # Copy everything else and build
 RUN dotnet publish AP.Web -c Release -o out

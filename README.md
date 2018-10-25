@@ -79,7 +79,7 @@ dotnet AP.Web.dll
 
 * **Jakub Kowalski** - *Main work* - [Kubion70](https://github.com/Kubion70)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/Kubion70/AP/contributors) who participated in this project.
 
 ## License
 

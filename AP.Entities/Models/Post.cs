@@ -22,11 +22,13 @@ namespace AP.Entities.Models
         [Required]
         public string Title { get; set; }
 
+        [Required]
         public string Content { get; set; }
 
         [Required]
         public string Slug { get; set; }
 
+        [Required]
         public SystemUser Author { get; set; }
 
         [Required]
@@ -45,5 +47,40 @@ namespace AP.Entities.Models
         public DateTime? ModifiedOn { get; set; }
 
         public SystemUser ModifiedBy { get; set; }
+    }
+
+    namespace Eager
+    {
+        public class Post
+        {
+            public Guid Id { get; set; }
+
+            [Required]
+            public string Title { get; set; }
+
+            [Required]
+            public string Content { get; set; }
+
+            [Required]
+            public string Slug { get; set; }
+
+            [Required]
+            public Guid Author { get; set; }
+
+            [Required]
+            public bool Publish { get; set; }
+
+            public DateTime PublishDate { get; set; }
+
+            public IEnumerable<Guid> Categories { get; set; }
+
+            public DateTime CreatedOn { get; internal set; }
+
+            public Guid CreatedBy { get; internal set; }
+
+            public DateTime? ModifiedOn { get; internal set; }
+
+            public Guid ModifiedBy { get; internal set; }
+        }
     }
 }

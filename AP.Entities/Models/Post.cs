@@ -29,7 +29,7 @@ namespace AP.Entities.Models
         public string Slug { get; set; }
 
         [Required]
-        public SystemUser Author { get; set; }
+        public User Author { get; set; }
 
         [Required]
         public bool Publish { get; set; }
@@ -41,12 +41,7 @@ namespace AP.Entities.Models
         [Required, DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedOn { get; }
 
-        [Required]
-        public SystemUser CreatedBy { get; internal set; }
-
         public DateTime? ModifiedOn { get; set; }
-
-        public SystemUser ModifiedBy { get; set; }
     }
 
     namespace Eager
@@ -55,19 +50,14 @@ namespace AP.Entities.Models
         {
             public Guid Id { get; set; }
 
-            [Required]
             public string Title { get; set; }
 
-            [Required]
             public string Content { get; set; }
 
-            [Required]
             public string Slug { get; set; }
 
-            [Required]
             public Guid Author { get; set; }
 
-            [Required]
             public bool Publish { get; set; }
 
             public DateTime PublishDate { get; set; }
@@ -76,11 +66,7 @@ namespace AP.Entities.Models
 
             public DateTime CreatedOn { get; internal set; }
 
-            public Guid CreatedBy { get; internal set; }
-
             public DateTime? ModifiedOn { get; internal set; }
-
-            public Guid ModifiedBy { get; internal set; }
         }
     }
 }

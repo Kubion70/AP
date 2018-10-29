@@ -8,7 +8,7 @@ namespace AP.Repositories.Contexts
     {
         #region Entities
 
-        public DbSet<Models.SystemUser> SystemUsers { get; set; }
+        public DbSet<Models.User> Users { get; set; }
         public DbSet<Models.Category> Categories { get; set; }
         public DbSet<Models.Post> Posts { get; set; }
 
@@ -28,7 +28,7 @@ namespace AP.Repositories.Contexts
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Data Source=xxx.xx.x.x;Initial Catalog=DbName;User ID=sa;Password=strongPassword123;");
+            optionsBuilder.UseSqlServer("Data Source=IP_ADDRESS;Initial Catalog=DATABASE_NAME;User ID=USERNAME;Password=PASSWORD;");
 
             base.OnConfiguring(optionsBuilder);
         }

@@ -24,11 +24,20 @@ namespace AP.Entities.Models
         [Required, DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedOn { get; }
 
-        [Required]
-        public SystemUser CreatedBy { get; internal set; }
-
         public DateTime? ModifiedOn { get; set; }
+    }
 
-        public SystemUser ModifiedBy { get; set; }
+    namespace Eager
+    {
+        public class Category
+        {
+            public Guid Id { get; set; }
+
+            public string Name { get; set; }
+
+            public DateTime CreatedOn { get; }
+
+            public DateTime? ModifiedOn { get; set; }
+        }
     }
 }

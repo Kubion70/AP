@@ -14,6 +14,8 @@ using Swashbuckle.AspNetCore.Swagger;
 using AP.Web.Extensions;
 using System.Reflection;
 using System.IO;
+using AutoMapper;
+using AP.Entities.Mappings;
 
 namespace AP.Web
 {
@@ -33,6 +35,7 @@ namespace AP.Web
             services.RegisterServices();
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.AddAutoMapper(x => x.AddProfile(new MappingEntity()));
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>

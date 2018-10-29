@@ -74,6 +74,7 @@ dotnet AP.Web.dll
 
 * [ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/getting-started/?view=aspnetcore-2.1&tabs=linux)
 * [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/) - ORM
+* [AutoMapper](http://docs.automapper.org/en/stable/index.html) - Entity Mapping
 
 ## Authors
 

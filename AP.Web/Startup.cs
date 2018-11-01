@@ -90,6 +90,7 @@ namespace AP.Web
         {
             if (env.IsDevelopment())
             {
+                app.UseStaticFiles();
                 // Enable middleware to serve generated Swagger as a JSON endpoint.
                 app.UseSwagger();
 
@@ -99,6 +100,7 @@ namespace AP.Web
                 {
                     c.SwaggerEndpoint("/swagger/v1/swagger.json", "AP V1");
                     c.RoutePrefix = "api";
+                    c.InjectStylesheet("../apiStyles/theme-material.css");
                 });
 
                 app.UseDeveloperExceptionPage();

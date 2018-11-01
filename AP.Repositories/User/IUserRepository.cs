@@ -8,5 +8,7 @@ namespace AP.Repositories.User
     public interface IUserRepository : IRepositoryBase<Models.User>
     {
         Task<Models.User> GetUserByPostId(Guid postId);
+
+        Task<Models.User> GetUserByUsername(string username);
     }
 }

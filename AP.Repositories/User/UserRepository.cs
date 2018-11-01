@@ -18,5 +18,15 @@ namespace AP.Repositories.User
 
             return post?.Author;
         }
+
+        public async Task<Models.User> GetUserByUsername(string username)
+        {
+            if(String.IsNullOrWhiteSpace(username))
+                throw new ArgumentNullException(nameof(username));
+
+            var user = await _databaseContext.Users.Where(u => u.Username.Equals(username)).FirstOrDefaultAsync();
+
+            return user;
+        }
     }
 }

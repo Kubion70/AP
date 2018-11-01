@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AutoMapper;
 
@@ -10,6 +11,7 @@ namespace AP.Entities.Mappings
         {
             ModelToEager();
             EagerToModel();
+            GuidToModel();
         }
 
         private void ModelToEager()
@@ -27,15 +29,35 @@ namespace AP.Entities.Mappings
         {
             // Post
             CreateMap<Models.Eager.Post, Models.Post>()
-            .AfterMap((e, m) =>
+            .ConstructUsing((e, m) => {
+                if(e.Id.HasValue)
+                    return new Models.Post(e.Id.Value);
+                else
+                    return new Models.Post();
+            })
+            .BeforeMap((e, m) =>
             {
-                m.Author = new Models.User(e.Id);
+                m.Author = new Models.User(e.Author);
                 m.Categories = new List<Models.Category>();
                 foreach (var categoryId in e.Categories)
                 {
                     m.Categories.Append(new Models.Category(categoryId));
                 }
             });
+        }
+
+        private void GuidToModel()
+        {
+            // User
+            CreateMap<Guid, Models.User>()
+            .ConstructUsing((id, m) => {
+                if(id.Equals(Guid.Empty))
+                    return new Models.User();
+                else
+                    return new Models.User(id);
+            })
+            .ForMember(m => m.Id, opt => opt.MapFrom(g => g))
+            .ForAllOtherMembers(m => m.Ignore());
         }
     }
 }

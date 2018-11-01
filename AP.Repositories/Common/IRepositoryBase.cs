@@ -13,5 +13,7 @@ namespace AP.Repositories.Common
         Task<E> Update(E entity);
 
         Task<Boolean> Delete(E entity);
+
+        bool Exists(Guid entityId);
     }
 }

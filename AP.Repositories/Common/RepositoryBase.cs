@@ -1,6 +1,8 @@
 using AP.Entities;
 using AP.Repositories.Contexts;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace AP.Repositories.Common
@@ -14,19 +16,24 @@ namespace AP.Repositories.Common
             _databaseContext = new DatabaseContext();
         }
 
+        /// <summary>
+        /// Add record to database
+        /// </summary>
         public virtual async Task<E> Create(E entity)
         {
             // Adding value asynchrously
-            var addTask = await _databaseContext.Set<E>().AddAsync(entity);
+            var addTask = _databaseContext.Set<E>().Attach(entity);
             entity = addTask.Entity;
-
+            
             // Save added value asynchrously
-            var saveTask = _databaseContext.SaveChangesAsync();
-            saveTask.Start();
+            var saveTask = await _databaseContext.SaveChangesAsync();
 
             return entity;
         }
 
+        /// <summary>
+        /// Retrieve record from database
+        /// </summary>
         public virtual async Task<E> Retrieve(Guid id)
         {
             E entity = await _databaseContext.Set<E>().FindAsync(id);
@@ -34,6 +41,11 @@ namespace AP.Repositories.Common
             return entity;
         }
 
+        /// <summary>
+        /// Update exisitng record
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         public virtual async Task<E> Update(E entity)
         {
             E result = await _databaseContext.Set<E>().FindAsync(entity.Id);
@@ -45,12 +57,30 @@ namespace AP.Repositories.Common
             return result;
         }
 
+        /// <summary>
+        /// Remove exisiting record
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
         public virtual async Task<Boolean> Delete(E entity)
         {
             E result = await _databaseContext.Set<E>().FindAsync(entity.Id);
             _databaseContext.Set<E>().Remove(result);
 
             return _databaseContext.SaveChanges() > 0;
+        }
+
+        /// <summary>
+        /// Returns whether record of specified id exists in database or not
+        /// </summary>
+        /// <param name="id">Entity unique identifier</param>
+        public virtual bool Exists(Guid entityId)
+        {
+            if (entityId.Equals(Guid.Empty))
+                throw new ArgumentNullException(nameof(entityId));
+
+            bool exists = _databaseContext.Set<E>().Any(e => e.Id.Equals(entityId));
+            return exists;
         }
     }
 }

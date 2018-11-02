@@ -30,7 +30,7 @@ namespace AP.Repositories.Post
                 return null;
             }
 
-            var post = _databaseContext.Posts.Where(p => p.Slug.Equals(slug)).SingleOrDefaultAsync();
+            var post = _databaseContext.Posts.Where(p => p.Slug.Equals(slug)).Include(p => p.Author).Include(p => p.Categories).SingleOrDefaultAsync();
 
             return post;
         }

@@ -20,12 +20,15 @@ namespace AP.Entities.Models
         #endregion Ctor
 
         [Required]
+        [Range(0, 100)]
         public string Title { get; set; }
 
         [Required]
+        [Range(0, 7000)]
         public string Content { get; set; }
 
         [Required]
+        [Range(0, 35)]
         public string Slug { get; set; }
 
         [Required]
@@ -34,7 +37,7 @@ namespace AP.Entities.Models
         [Required]
         public bool Publish { get; set; }
 
-        public DateTime PublishDate { get; set; }
+        public DateTime? PublishDate { get; set; }
 
         public IEnumerable<Category> Categories { get; set; }
 
@@ -48,7 +51,8 @@ namespace AP.Entities.Models
     {
         public class Post
         {
-            public Guid Id { get; set; }
+            // Required only for PUT and DELETE operations
+            public Guid? Id { get; set; }
 
             public string Title { get; set; }
 

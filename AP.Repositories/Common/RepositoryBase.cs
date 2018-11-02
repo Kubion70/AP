@@ -62,9 +62,9 @@ namespace AP.Repositories.Common
         /// </summary>
         /// <param name="entity"></param>
         /// <returns></returns>
-        public virtual async Task<Boolean> Delete(E entity)
+        public virtual async Task<Boolean> Delete(Guid entityId)
         {
-            E result = await _databaseContext.Set<E>().FindAsync(entity.Id);
+            E result = await _databaseContext.Set<E>().FindAsync(entityId);
             _databaseContext.Set<E>().Remove(result);
 
             return _databaseContext.SaveChanges() > 0;

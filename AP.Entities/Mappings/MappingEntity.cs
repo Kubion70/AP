@@ -44,6 +44,15 @@ namespace AP.Entities.Mappings
                     m.Categories.Append(new Models.Category(categoryId));
                 }
             });
+
+            // Category
+            CreateMap<Models.Eager.Category, Models.Category>()
+            .ConstructUsing((e, m) => {
+                if(e.Id.HasValue)
+                    return new Models.Category(e.Id.Value);
+                else
+                    return new Models.Category();
+            });
         }
 
         private void GuidToModel()

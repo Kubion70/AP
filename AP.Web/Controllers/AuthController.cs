@@ -33,6 +33,7 @@ namespace AP.Web.Controllers
         }
 
         [HttpGet("{username}")]
+        [AllowAnonymous]
         [Produces("application/json")]
         [ProducesResponseType(200, Type = typeof(string))]
         [ProducesResponseType(400)]
@@ -47,6 +48,7 @@ namespace AP.Web.Controllers
         }
 
         [HttpPost("{username}")]
+        [AllowAnonymous]
         [Produces("application/json")]
         [ProducesResponseType(200, Type = typeof(string))]
         [ProducesResponseType(400)]

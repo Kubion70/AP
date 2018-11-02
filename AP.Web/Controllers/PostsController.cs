@@ -13,6 +13,7 @@ using System.Collections.Generic;
 using AP.Validators.Post;
 using AP.Repositories.Category;
 using System.ComponentModel.DataAnnotations;
+using AP.Entities.Enums;
 
 namespace AP.Web.Controllers
 {
@@ -44,7 +45,7 @@ namespace AP.Web.Controllers
         [HttpGet]
         [AllowAnonymous]
         [Produces("application/json")]
-        [ProducesResponseType(200, Type = typeof(Eager.Post))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Eager.Post>))]
         [ProducesResponseType(204)] 
         public async Task<IActionResult> Get([FromQuery] PagingOptions pagingOptions)
         {
@@ -78,7 +79,7 @@ namespace AP.Web.Controllers
         {
             if(String.IsNullOrWhiteSpace(slug))
             {
-                return BadRequest("INVALID_SLUG");
+                return BadRequest(CommonResponseMessages.InvalidSlug);
             }
 
             var post = await _postRepository.GetPostBySlug(slug);
@@ -95,18 +96,18 @@ namespace AP.Web.Controllers
         [HttpGet("{slug}/categories")]
         [AllowAnonymous]
         [Produces("application/json")]
-        [ProducesResponseType(200, Type = typeof(Eager.Category))]
+        [ProducesResponseType(200, Type = typeof(IEnumerable<Eager.Category>))]
         [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         public async Task<IActionResult> GetCategories(string slug)
         {
             if (String.IsNullOrWhiteSpace(slug))
-                return BadRequest("INVALID_SLUG");
+                return BadRequest(CommonResponseMessages.InvalidSlug);
 
             var post = await _postRepository.GetPostBySlug(slug);
 
             if (post == null)
-                return BadRequest("NO_POST_FOUND");
+                return BadRequest(CommonResponseMessages.NoPostFound);
 
             if (post.Categories == null || !post.Categories.Any())
                 return NoContent();
@@ -127,11 +128,11 @@ namespace AP.Web.Controllers
         public async Task<IActionResult> GetAuthor(string slug)
         {
             if (String.IsNullOrWhiteSpace(slug))
-                return BadRequest("INVALID_SLUG");
+                return BadRequest(CommonResponseMessages.InvalidSlug);
 
             var post = await _postRepository.GetPostBySlug(slug);
             if (post == null)
-                return BadRequest("NO_POST_FOUND");
+                return BadRequest(CommonResponseMessages.NoPostFound);
 
             var user = await _userRepository.GetUserByPostId(post.Id);
             if (user == null)
@@ -159,10 +160,10 @@ namespace AP.Web.Controllers
             var validationErrors = PostValidator.OnPostCreateValidation(postMapped);            
             
             if(!_userRepository.Exists(postMapped.Author.Id))
-                validationErrors.Append("AUTHOR_DOES_NOT_EXISTS");
+                validationErrors.Append(CommonResponseMessages.AuthorDoesNotExists);
 
             if(!postMapped.Categories.All(c => _categoryRepository.Exists(c.Id)))
-                validationErrors.Append("ONE_OF_CATEGORIES_DOES_NOT_EXISTS");
+                validationErrors.Append(CommonResponseMessages.OneOfCategoriesDoesNotExists);
 
             if(validationErrors.Any())
             {
@@ -190,19 +191,19 @@ namespace AP.Web.Controllers
         public async Task<IActionResult> Put([FromBody] Eager.Post post)
         {
             if(!post.Id.HasValue || post.Id.Value.Equals(Guid.Empty))
-                return BadRequest("NO_ID");
+                return BadRequest(CommonResponseMessages.NoId);
             else if(!_postRepository.Exists(post.Id.Value))
-                return NotFound("POST_DOES_NOT_EXISTS");
+                return NoContent();
 
             var postMapped = _mapper.Map<Models.Post>(post);
 
             var validationErrors = PostValidator.OnPostCreateValidation(postMapped);            
             
             if(!_userRepository.Exists(postMapped.Author.Id))
-                validationErrors.Append("AUTHOR_DOES_NOT_EXISTS");
+                validationErrors.Append(CommonResponseMessages.AuthorDoesNotExists);
 
             if(!postMapped.Categories.All(c => _categoryRepository.Exists(c.Id)))
-                validationErrors.Append("ONE_OF_CATEGORIES_DOES_NOT_EXISTS");
+                validationErrors.Append(CommonResponseMessages.OneOfCategoriesDoesNotExists);
 
             if(validationErrors.Any())
             {
@@ -230,10 +231,10 @@ namespace AP.Web.Controllers
         public async Task<IActionResult> Delete(Guid id)
         {
             if(id.Equals(Guid.Empty))
-                return BadRequest("NO_ID");
+                return BadRequest(CommonResponseMessages.NoId);
 
             if(!_postRepository.Exists(id))
-                return NotFound("POST_DOES_NOT_EXISTS");
+                return NoContent();
 
             await _postRepository.Delete(id);
             return Ok();

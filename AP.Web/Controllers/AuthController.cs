@@ -44,7 +44,7 @@ namespace AP.Web.Controllers
         [Produces("application/json")]
         [ProducesResponseType(200, Type = typeof(string))]
         [ProducesResponseType(400)]
-        public async Task<IActionResult> GetChallange([Required] string username)
+        public IActionResult GetChallange([Required] string username)
         {
             if(string.IsNullOrWhiteSpace(username))
                 return BadRequest("EMPTY_USERNAME");
@@ -67,7 +67,7 @@ namespace AP.Web.Controllers
         [ProducesResponseType(200, Type = typeof(string))]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
-        public async Task<IActionResult> Authenticate(string username, [FromBody] string password)
+        public IActionResult Authenticate(string username, [FromBody] string password)
         {
             if(string.IsNullOrWhiteSpace(username))
                 return BadRequest("EMPTY_USERNAME");

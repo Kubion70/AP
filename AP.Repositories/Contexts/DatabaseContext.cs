@@ -28,7 +28,16 @@ namespace AP.Repositories.Contexts
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Data Source=IP_ADDRESS;Initial Catalog=DATABASE_NAME;User ID=USERNAME;Password=PASSWORD;");
+            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            switch(env)
+            {
+                case "Production":
+                    optionsBuilder.UseSqlServer("Data Source=IP_ADDRESS;Initial Catalog=DATABASE_NAME;User ID=USERNAME;Password=PASSWORD;");
+                    break;
+                default: case "Development":
+                    optionsBuilder.UseInMemoryDatabase(databaseName: "TestDB");
+                    break;
+            }
 
             base.OnConfiguring(optionsBuilder);
         }

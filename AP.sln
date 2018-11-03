@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AP.Entities", "AP.Entities\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AP.Repositories", "AP.Repositories\AP.Repositories.csproj", "{3ADCA348-439B-4432-B0A5-AB668659B90D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AP.Tests", "AP.Tests\AP.Tests.csproj", "{DB848B2B-4C64-4983-83E5-C861D65C4421}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,5 +60,17 @@ Global
 		{3ADCA348-439B-4432-B0A5-AB668659B90D}.Release|x64.Build.0 = Release|Any CPU
 		{3ADCA348-439B-4432-B0A5-AB668659B90D}.Release|x86.ActiveCfg = Release|Any CPU
 		{3ADCA348-439B-4432-B0A5-AB668659B90D}.Release|x86.Build.0 = Release|Any CPU
+		{DB848B2B-4C64-4983-83E5-C861D65C4421}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB848B2B-4C64-4983-83E5-C861D65C4421}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB848B2B-4C64-4983-83E5-C861D65C4421}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{DB848B2B-4C64-4983-83E5-C861D65C4421}.Debug|x64.Build.0 = Debug|Any CPU
+		{DB848B2B-4C64-4983-83E5-C861D65C4421}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{DB848B2B-4C64-4983-83E5-C861D65C4421}.Debug|x86.Build.0 = Debug|Any CPU
+		{DB848B2B-4C64-4983-83E5-C861D65C4421}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB848B2B-4C64-4983-83E5-C861D65C4421}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB848B2B-4C64-4983-83E5-C861D65C4421}.Release|x64.ActiveCfg = Release|Any CPU
+		{DB848B2B-4C64-4983-83E5-C861D65C4421}.Release|x64.Build.0 = Release|Any CPU
+		{DB848B2B-4C64-4983-83E5-C861D65C4421}.Release|x86.ActiveCfg = Release|Any CPU
+		{DB848B2B-4C64-4983-83E5-C861D65C4421}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
@@ -8,6 +9,9 @@ namespace AP.Cryptography
     {
         public static string GenerateSHA256String(string input)
         {
+            if(string.IsNullOrEmpty(input))
+                throw new ArgumentNullException(nameof(input));
+
             SHA256 sha256 = SHA256.Create();
             byte[] bytes = Encoding.UTF8.GetBytes(input);
             byte[] hash = sha256.ComputeHash(bytes);
@@ -16,6 +20,12 @@ namespace AP.Cryptography
 
         public static string ComputePasswordAndSalt(string password, string salt, HashAlgorithm hashAlgorithm)
         {
+            if(string.IsNullOrEmpty(password))
+                throw new ArgumentNullException(nameof(password));
+
+            if(string.IsNullOrEmpty(salt))
+                throw new ArgumentNullException(nameof(salt));
+
             byte[] saltBytes = Encoding.UTF8.GetBytes(salt);
             byte[] passwordAsBytes = Encoding.UTF8.GetBytes(password);
 

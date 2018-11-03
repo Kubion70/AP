@@ -43,5 +43,33 @@ namespace AP.Entities.Enums
                 return "ONE_OF_CATEGORIES_DOES_NOT_EXISTS";
             }
         }
+
+        public static string InvalidEmail
+        {
+            get {
+                return "INVALID_EMAIL";
+            }
+        }
+
+        public static string EmptyUsername
+        {
+            get {
+                return "EMPTY_USERNAME";
+            }
+        }
+
+        public static string EmptyPassword
+        {
+            get {
+                return "EMPTY_PASSWORD";
+            }
+        }
+
+        public static string PasswordTooWeak
+        {
+            get {
+                return "PASSWORD_TOO_WEAK";
+            }
+        }
     }
 }

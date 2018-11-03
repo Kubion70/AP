@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AP.Repositories.Common;
@@ -9,6 +10,13 @@ namespace AP.Repositories.User
 {
     public class UserRepository : RepositoryBase<Models.User>, IUserRepository
     {
+        public async Task<IEnumerable<Models.User>> GetAllUsers()
+        {
+            var users = await _databaseContext.Users.ToListAsync();
+
+            return users;
+        }
+
         public async Task<Models.User> GetUserByPostId(Guid postId)
         {
             if (postId == Guid.Empty)

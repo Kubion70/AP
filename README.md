@@ -24,28 +24,12 @@ Clone repository
 git clone https://github.com/Kubion70/AP.git
 ```
 
-When you have a folder with copy of repository open the DatabaseContext.cs placed in  ./AP.Repositories/Context . Change the connection string to let server connect to MSSQL database. (If your are using different RDBMS you can change the method `UseSqlServer("")` based on [Entity Framework supported databases](https://entityframework.net/supported-database-providers))
-
-```
-optionsBuilder.UseSqlServer("Data Source=IP_ADDRESS;Initial Catalog=DATABASE_NAME;User ID=USERNAME;Password=PASSWORD;");
-```
+When you have a copy of repository it's time to setup JwT secret key (needed for your users authorization). Go AP<span>.</span>Web folder, open `appsettings.json` and replace the `secret key` string with your own (it is a good practice to user at least SHA256 generated key).
 
 Open terminal and go to the main folder. Run command below to restore projects dependencies and tools.
 
 ```
 dotnet restore
-```
-
-Use migrations to create actual database structure
-
-```
-dotnet ef migrations add $(date '+%d%m%Y%H') --startup-project AP.Repositories --project AP.Repositories
-```
-
-Update database with generated migrations
-
-```
-dotnet ef database update --startup-project AP.Repositories --project AP.Repositories
 ```
 
 To run project (development mode) use this command
@@ -56,9 +40,39 @@ dotnet run --project AP.Web
 
 When the application will be up and running go to https://localhost:5001/api where  [Swagger](https://swagger.io/) will show you all endpoints.
 
+**Remember** that development mode runs with database in memory. What means all stored data clears when the program stops.
+
+## Running the tests
+
+Our tests are mainly focues on endpoints test (end to end as well). To run it go to the main folder and run following command:
+
+```
+dotnet test
+```
+
+If you have configured the project correctly all tests should bee passed successfully.
+
 ## Deployment
 
-For production mode replace the `dotnet run` command with
+Open the DatabaseContext.cs placed in  ./AP.Repositories/Context . Change the connection string to let server connect to MSSQL database. (If your are using different RDBMS you can change the method `UseSqlServer("")` based on [Entity Framework supported databases](https://entityframework.net/supported-database-providers))
+
+```
+optionsBuilder.UseSqlServer("Data Source=IP_ADDRESS;Initial Catalog=DATABASE_NAME;User ID=USERNAME;Password=PASSWORD;");
+```
+
+Use migrations to create actual database structure
+
+```
+ASPNETCORE_ENVIRONMENT=Production dotnet ef migrations add $(date '+%d%m%Y%H') --startup-project AP.Repositories --project AP.Repositories
+```
+
+Update database with generated migrations
+
+```
+ASPNETCORE_ENVIRONMENT=Production dotnet ef database update --startup-project AP.Repositories --project AP.Repositories
+```
+
+For production mode publish app with
 
 ```
 dotnet publish AP.Web -c Release
@@ -67,7 +81,7 @@ dotnet publish AP.Web -c Release
 and to run it use
 
 ```
-dotnet AP.Web.dll
+ASPNETCORE_ENVIRONMENT=Production dotnet AP.Web.dll
 ```
 
 ## Built With
@@ -75,6 +89,7 @@ dotnet AP.Web.dll
 * [ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/getting-started/?view=aspnetcore-2.1&tabs=linux)
 * [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/) - ORM
 * [AutoMapper](http://docs.automapper.org/en/stable/index.html) - Entity Mapping
+* [XUnit](https://xunit.github.io/) - Unit Testing
 
 ## Authors
 

@@ -72,6 +72,18 @@ namespace AP.Web.Controllers
 
         #region POST
 
+        /// <summary>
+        /// Create user record
+        /// </summary>
+        /// <remarks>
+        /// In request password field should contains raw user password.
+        /// If you get validation error "INVALID_PASSWORD" remember that password need to be strong. What means:
+        /// - Two uppercase letters
+        /// - One special case letter
+        /// - Two digits
+        /// - Three lowercase letters
+        /// - Length of at least 8
+        /// </remarks>
         [HttpPost]
         [Authorize]
         [ProducesResponseType(201)]

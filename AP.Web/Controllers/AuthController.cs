@@ -32,6 +32,13 @@ namespace AP.Web.Controllers
             _cache = cache;
         }
 
+        /// <summary>
+        /// Returns slat
+        /// </summary>
+        /// <remarks>
+        /// Salt is generated for specific username and you will need it to complete authorization. Salt will be kept 5 minutes in cache.
+        /// Salt is necessary to hash user user password before sending it to AP
+        /// </remarks>
         [HttpGet("{username}")]
         [AllowAnonymous]
         [Produces("application/json")]
@@ -47,6 +54,13 @@ namespace AP.Web.Controllers
             return Ok(salt); 
         }
 
+        /// <summary>
+        /// Returns token
+        /// </summary>
+        /// <remarks>
+        /// To authenticate first you need to get salt. When you have salt then you need to hash user password with SHA256 and then hash the hashed password with SHA256 + Salt
+        /// Sended password should be created from schema `SHA256+Salt(SHA256(password))`
+        /// </remarks>
         [HttpPost("{username}")]
         [AllowAnonymous]
         [Produces("application/json")]

@@ -51,9 +51,8 @@ namespace AP.Repositories.Common
             E result = await _databaseContext.Set<E>().FindAsync(entity.Id);
             _databaseContext.Entry(result).CurrentValues.SetValues(entity);
 
-            var saveTask = _databaseContext.SaveChangesAsync();
-            saveTask.Start();
-
+            var saveTask = await _databaseContext.SaveChangesAsync();
+            
             return result;
         }
 

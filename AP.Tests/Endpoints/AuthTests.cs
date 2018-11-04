@@ -13,32 +13,15 @@ using System.Net.Http;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Text;
+using AP.Tests.Helpers;
+using AP.Web;
 
 namespace AP.Tests.Endpoints
 {
-    public class AuthTests : IClassFixture<WebApplicationFactory<AP.Web.Startup>>
+    public class AuthTests : BaseEndpointTest
     {
-        private readonly WebApplicationFactory<AP.Web.Startup> _factory;
-
-        private readonly IUserRepository _userRepository;
-
-        // Preparings for tests
-        public AuthTests(WebApplicationFactory<AP.Web.Startup> factory)
+        public AuthTests(WebApplicationFactory<Startup> factory) : base(factory)
         {
-            _factory = factory;
-
-            _userRepository = new UserRepository();
-            
-            var adminUser = new Models.User()
-            {
-                Username = "Admin",
-                Password = SHA.GenerateSHA256String("AAdmin12!"),
-                Email = "admin@admin.pl",
-                FirstName = "Adam",
-                LastName = "Adamowski"
-            };
-
-            _userRepository.Create(adminUser).Wait();
         }
 
         [Theory]
@@ -47,9 +30,7 @@ namespace AP.Tests.Endpoints
         [InlineData(null, false)]
         public async Task IsSaltGeneratingCorrectly(string username, bool sucessfulResponse)
         {
-            var client = _factory.CreateClient();
-
-            var response = await client.GetAsync($"api/auth/{username}");
+            var response = await DefaultClient.GetAsync($"api/auth/{username}");
             string responseBody = await response.Content.ReadAsStringAsync();
             Assert.Equal(sucessfulResponse, response.IsSuccessStatusCode);
 
@@ -62,9 +43,7 @@ namespace AP.Tests.Endpoints
         [InlineData("wrongPassword", false)]
         public async Task IsAuthenticationPossible(string password, bool sucessfulResponse)
         {
-            var client = _factory.CreateClient();
-
-            var challangeResponse = await client.GetAsync("api/auth/Admin");
+            var challangeResponse = await DefaultClient.GetAsync("api/auth/Admin");
             string challangeBody = await challangeResponse.Content.ReadAsStringAsync();
             string salt = challangeBody.Trim('"');
 
@@ -74,7 +53,7 @@ namespace AP.Tests.Endpoints
             var jsonString = JsonConvert.SerializeObject(hashedWithSalt);
             var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
-            var authResponse = await client.PostAsync("api/auth/Admin", content);
+            var authResponse = await DefaultClient.PostAsync("api/auth/Admin", content);
             string authBody = await authResponse.Content.ReadAsStringAsync();
 
             Assert.Equal(sucessfulResponse, authResponse.IsSuccessStatusCode);
@@ -86,12 +65,10 @@ namespace AP.Tests.Endpoints
         [Fact]
         public async Task AuthenticationShouldFailWithoutSaltFirst()
         {
-            var client = _factory.CreateClient();
-
             var jsonString = JsonConvert.SerializeObject("test");
             var content = new StringContent(jsonString, Encoding.UTF8, "application/json");
 
-            var authResponse = await client.PostAsync("api/auth/Admin", content);
+            var authResponse = await DefaultClient.PostAsync("api/auth/Admin", content);
 
             Assert.False(authResponse.IsSuccessStatusCode);
         }

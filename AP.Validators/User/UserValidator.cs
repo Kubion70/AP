@@ -16,7 +16,7 @@ namespace AP.Validators.User
                 validationErrors.Add(CommonResponseMessages.EmptyUsername);
 
             // Password
-            string passwordPattern = @"^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8}$";
+            string passwordPattern = @"^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8,}$";
             if(string.IsNullOrWhiteSpace(user.Password))
                 validationErrors.Add(CommonResponseMessages.EmptyPassword);
             else if(!Regex.IsMatch(user.Password, passwordPattern))

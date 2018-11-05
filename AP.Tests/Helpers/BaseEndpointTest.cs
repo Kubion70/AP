@@ -28,7 +28,7 @@ namespace AP.Tests.Helpers
             get 
             { 
                 CreateAdminUser().Wait();
-                var client = factory.CreateClient(); 
+                var client = factory.CreateClient();
                 client.DefaultRequestHeaders.Authorization = AuthorizationHelper.AdminAuthorization(client).Result;
                 return client;
             }
@@ -49,9 +49,9 @@ namespace AP.Tests.Helpers
 
         protected async Task CreateAdminUser()
         {
-            var users = await userRepository.GetAllUsers();
+            var admin = await userRepository.GetUserByUsername("Admin");
 
-            if(!users.Any())
+            if(admin == null)
             {
                 var adminUser = new Models.User()
                 {

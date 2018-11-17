@@ -17,6 +17,7 @@ namespace AP.Entities
             if(id.Equals(Guid.Empty)){
                 throw new ArgumentNullException("Entity constructor can't instantiatie with empty Guid");
             }
+            Id = id;
         }
 
         #endregion Ctor

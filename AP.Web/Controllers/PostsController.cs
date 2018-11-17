@@ -14,6 +14,8 @@ using AP.Validators.Post;
 using AP.Repositories.Category;
 using System.ComponentModel.DataAnnotations;
 using AP.Entities.Enums;
+using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Http;
 
 namespace AP.Web.Controllers
 {
@@ -62,7 +64,18 @@ namespace AP.Web.Controllers
 
             var mappedPosts = _mapper.Map<IEnumerable<Models.Post>, IEnumerable<Eager.Post>>(posts);
 
-            return !mappedPosts.Any() ? NoContent() : (IActionResult)new JsonResult(mappedPosts);
+            if(!mappedPosts.Any())
+            {
+                return NoContent();
+            }
+            else
+            {
+                var result = Ok(mappedPosts);
+
+                Response.Headers.Add("X-Total-Count", _postRepository.CountAllPosts().Result.ToString());
+                
+                return result;
+            }
         }
 
         /// <summary>
@@ -90,6 +103,36 @@ namespace AP.Web.Controllers
         }
 
         /// <summary>
+        /// Returns post by id
+        /// </summary>
+        /// <param name="id">Post unique identifier</param>
+        [HttpGet("{id:guid}")]
+        [AllowAnonymous]
+        [Produces("application/json")]
+        [ProducesResponseType(200, Type = typeof(Eager.Post))]
+        [ProducesResponseType(204)]
+        [ProducesResponseType(400)]
+        public async Task<IActionResult> Get(Guid id)
+        {
+            if(id.Equals(Guid.Empty))
+            {
+                return BadRequest(CommonResponseMessages.NoId);
+            }
+
+            var post = await _postRepository.GetPostsById(id);
+
+            if(post == null)
+                return NoContent();
+
+            var mappedPost = _mapper.Map<Eager.Post>(post);
+
+            if(mappedPost == null)
+                return NoContent();
+            else
+                return Ok(mappedPost);
+        }
+
+        /// <summary>
         /// Get categories related with post
         /// </summary>
         /// <param name="slug">Post url identifier</param>
@@ -109,10 +152,10 @@ namespace AP.Web.Controllers
             if (post == null)
                 return BadRequest(CommonResponseMessages.NoPostFound);
 
-            if (post.Categories == null || !post.Categories.Any())
+            if (post.PostCategories == null || !post.PostCategories.Any())
                 return NoContent();
 
-            return new JsonResult(post.Categories);
+            return new JsonResult(post.PostCategories);
         }
 
         /// <summary>
@@ -162,7 +205,7 @@ namespace AP.Web.Controllers
             if(!_userRepository.Exists(postMapped.Author.Id))
                 validationErrors.Append(CommonResponseMessages.AuthorDoesNotExists);
 
-            if(!postMapped.Categories.All(c => _categoryRepository.Exists(c.Id)))
+            if(!postMapped.PostCategories.All(pc => _categoryRepository.Exists(pc.CategoryId)))
                 validationErrors.Append(CommonResponseMessages.OneOfCategoriesDoesNotExists);
 
             if(validationErrors.Any())
@@ -171,9 +214,12 @@ namespace AP.Web.Controllers
             }
             else
             {
+                postMapped.CreatedOn = DateTime.Now;
                 postMapped.ModifiedOn = null;
+                postMapped.Slug = GenerateSlug(postMapped.Title);
                 
-                var createTask = await _postRepository.Create(postMapped);
+                var createdPost = await _postRepository.Create(postMapped);
+
                 return Created($"{this.Request.Scheme}://{this.Request.Host}/api/Posts/{postMapped.Slug}", null);
             }
         }
@@ -202,7 +248,7 @@ namespace AP.Web.Controllers
             if(!_userRepository.Exists(postMapped.Author.Id))
                 validationErrors.Append(CommonResponseMessages.AuthorDoesNotExists);
 
-            if(!postMapped.Categories.All(c => _categoryRepository.Exists(c.Id)))
+            if(!postMapped.PostCategories.All(pc => _categoryRepository.Exists(pc.CategoryId)))
                 validationErrors.Append(CommonResponseMessages.OneOfCategoriesDoesNotExists);
 
             if(validationErrors.Any())
@@ -211,7 +257,21 @@ namespace AP.Web.Controllers
             }
             else
             {
+                var dbPost = await _postRepository.GetPostsById(postMapped.Id);
+                foreach (var relation in dbPost.PostCategories.ToList())
+                {
+                    if(!postMapped.PostCategories.Any(pc => pc.PostId.Equals(relation.PostId) && pc.CategoryId.Equals(relation.CategoryId)))
+                        await _postRepository.RemoveRelation<Models.PostCategory>(relation);
+                }
+                foreach (var relation in postMapped.PostCategories)
+                {
+                    if(!dbPost.PostCategories.Any(pc => pc.PostId.Equals(relation.PostId) && pc.CategoryId.Equals(relation.CategoryId)))
+                        await _postRepository.CreateRelation<Models.PostCategory>(relation);
+                }
+
+                postMapped.CreatedOn = dbPost.CreatedOn;
                 postMapped.ModifiedOn = DateTime.Now;
+                postMapped.Slug = GenerateSlug(postMapped.Title);
                 
                 var postUpdated = await _postRepository.Update(postMapped);
                 return Ok();
@@ -241,5 +301,24 @@ namespace AP.Web.Controllers
         }
 
         #endregion DELETE
+        
+        private string GenerateSlug(string phrase) 
+        { 
+            string str = RemoveAccent(phrase).ToLower(); 
+            // invalid chars           
+            str = Regex.Replace(str, @"[^a-z0-9\s-]", ""); 
+            // convert multiple spaces into one space   
+            str = Regex.Replace(str, @"\s+", " ").Trim(); 
+            // cut and trim 
+            str = str.Substring(0, str.Length <= 45 ? str.Length : 45).Trim();   
+            str = Regex.Replace(str, @"\s", "-"); // hyphens   
+            return str; 
+        } 
+
+        private string RemoveAccent(string txt) 
+        { 
+            byte[] bytes = System.Text.Encoding.GetEncoding("Cyrillic").GetBytes(txt); 
+            return System.Text.Encoding.ASCII.GetString(bytes); 
+        }
     }
 }

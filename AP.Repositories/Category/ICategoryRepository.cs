@@ -8,5 +8,7 @@ namespace AP.Repositories.Category
     public interface ICategoryRepository : IRepositoryBase<Models.Category>
     {
         Task<IEnumerable<Models.Category>> GetAllCategories();
+
+        Task<bool> MassCategoriesUpdate(IEnumerable<Models.Category> categories);
     }
 }

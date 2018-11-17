@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -21,10 +22,12 @@ namespace AP.Entities.Models
         [Required]
         public string Name { get; set; }
 
-        [Required, DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime CreatedOn { get; }
+        [Required]
+        public DateTime CreatedOn { get; set; }
 
         public DateTime? ModifiedOn { get; set; }
+
+        public virtual IEnumerable<PostCategory> PostCategories { get; set; }
     }
 
     namespace Eager

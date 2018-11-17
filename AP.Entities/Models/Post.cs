@@ -31,6 +31,8 @@ namespace AP.Entities.Models
         [Range(0, 35)]
         public string Slug { get; set; }
 
+        public string ImageUri { get; set; }
+
         [Required]
         public User Author { get; set; }
 
@@ -39,10 +41,9 @@ namespace AP.Entities.Models
 
         public DateTime? PublishDate { get; set; }
 
-        public IEnumerable<Category> Categories { get; set; }
+        public virtual IEnumerable<PostCategory> PostCategories { get; set; }
 
-        [Required, DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime CreatedOn { get; }
+        public DateTime CreatedOn { get; set; }
 
         public DateTime? ModifiedOn { get; set; }
     }
@@ -60,11 +61,13 @@ namespace AP.Entities.Models
 
             public string Slug { get; set; }
 
+            public string ImageUri { get; set; }
+
             public Guid Author { get; set; }
 
             public bool Publish { get; set; }
 
-            public DateTime PublishDate { get; set; }
+            public DateTime? PublishDate { get; set; }
 
             public IEnumerable<Guid> Categories { get; set; }
 

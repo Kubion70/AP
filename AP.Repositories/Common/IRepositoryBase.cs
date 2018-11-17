@@ -15,5 +15,9 @@ namespace AP.Repositories.Common
         Task<Boolean> Delete(Guid entityId);
 
         bool Exists(Guid entityId);
+
+        Task<Boolean> RemoveRelation<R>(R relation) where R : class;
+
+        Task<R> CreateRelation<R>(R relation) where R : class;
     }
 }

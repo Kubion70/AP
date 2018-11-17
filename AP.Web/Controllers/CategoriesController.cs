@@ -81,6 +81,7 @@ namespace AP.Web.Controllers
 
             var categoryMapped = _mapper.Map<Eager.Category, Models.Category>(category);
 
+            categoryMapped.CreatedOn = DateTime.Now;
             categoryMapped.ModifiedOn = null;
 
             var create = await _categoryRepository.Create(categoryMapped);
@@ -94,24 +95,16 @@ namespace AP.Web.Controllers
         [HttpPut]
         [Authorize]
         [ProducesResponseType(200)]
-        [ProducesResponseType(204)]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
-        public async Task<IActionResult> Put([FromBody] Eager.Category category)
+        public async Task<IActionResult> Put([FromBody] IEnumerable<Eager.Category> categories)
         {
-            if(!category.Id.HasValue || category.Id.Equals(Guid.Empty))
-                return BadRequest(CommonResponseMessages.NoId);
-            
-            if(string.IsNullOrWhiteSpace(category.Name))
-                return BadRequest(CommonResponseMessages.EmptyName);
-
-            if(!_categoryRepository.Exists(category.Id.Value))
-                return NoContent();
-
-            var categoryMapped = _mapper.Map<Models.Category>(category);
-
-            await _categoryRepository.Update(categoryMapped);
-            return Ok();
+            var mappedCategories = _mapper.Map<IEnumerable<Models.Category>>(categories);
+            var result = await _categoryRepository.MassCategoriesUpdate(mappedCategories);
+            if(result)
+                return Ok();
+            else 
+                return BadRequest();
         }
 
         #endregion PUT

@@ -19,20 +19,37 @@ namespace AP.Repositories.Post
             pagingOptions.Offset = pagingOptions.Offset ?? 0;
             pagingOptions.Limit = pagingOptions.Limit ?? 100;
 
-            var posts = _databaseContext.Posts.Skip(pagingOptions.Offset.Value).Take(pagingOptions.Limit.Value).Include(p => p.Author).Include(p => p.Categories);
+            var posts = _databaseContext.Posts.Skip(pagingOptions.Offset.Value).Take(pagingOptions.Limit.Value).Include(p => p.Author).Include(p => p.PostCategories);
             return await posts.ToListAsync();
         }
 
-        public Task<Models.Post> GetPostBySlug(string slug)
+        public async Task<Models.Post> GetPostBySlug(string slug)
         {
             if(string.IsNullOrWhiteSpace(slug))
             {
                 return null;
             }
 
-            var post = _databaseContext.Posts.Where(p => p.Slug.Equals(slug)).Include(p => p.Author).Include(p => p.Categories).SingleOrDefaultAsync();
+            var post = await _databaseContext.Posts.Where(p => p.Slug.Equals(slug)).Include(p => p.Author).Include(p => p.PostCategories).SingleOrDefaultAsync();
 
             return post;
+        }
+
+        public async Task<Models.Post> GetPostsById(Guid id)
+        {
+            if(id.Equals(Guid.Empty))
+            {
+                return null;
+            }
+
+            var post = await _databaseContext.Posts.Where(p => p.Id.Equals(id)).Include(p => p.Author).Include(p => p.PostCategories).SingleOrDefaultAsync();
+
+            return post;
+        }
+
+        public async Task<int> CountAllPosts()
+        {
+            return await _databaseContext.Posts.CountAsync();
         }
     }
 }

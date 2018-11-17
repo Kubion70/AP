@@ -41,5 +41,23 @@ namespace AP.Repositories.Contexts
 
             base.OnConfiguring(optionsBuilder);
         }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Models.PostCategory>()
+                .HasKey(pc => new { pc.PostId, pc.CategoryId });
+
+            modelBuilder.Entity<Models.PostCategory>()
+                .HasOne(pc => pc.Post)
+                .WithMany(p => p.PostCategories)
+                .HasForeignKey(pc => pc.PostId);
+
+            modelBuilder.Entity<Models.PostCategory>()
+                .HasOne(pc => pc.Category)
+                .WithMany(c => c.PostCategories)
+                .HasForeignKey(pc => pc.CategoryId);
+
+            base.OnModelCreating(modelBuilder);
+        }
     }
 }

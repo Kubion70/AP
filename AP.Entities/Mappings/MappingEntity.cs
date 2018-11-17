@@ -21,7 +21,7 @@ namespace AP.Entities.Mappings
                 .AfterMap((m, e) =>
                 {
                     e.Author = m.Author.Id;
-                    e.Categories = m.Categories.Select(c => c.Id);
+                    e.Categories = m.PostCategories.Select(pc => pc.CategoryId);
                 });
 
             // User
@@ -45,11 +45,17 @@ namespace AP.Entities.Mappings
                 .BeforeMap((e, m) =>
                 {
                     m.Author = new Models.User(e.Author);
-                    m.Categories = new List<Models.Category>();
-                    foreach (var categoryId in e.Categories)
-                    {
-                        m.Categories.Append(new Models.Category(categoryId));
+                    var postCategories = new List<Models.PostCategory>();
+                    if(e.Categories != null) {
+                        foreach (var categoryId in e.Categories)
+                        {
+                            postCategories.Add(new Models.PostCategory(){
+                                CategoryId = categoryId,
+                                PostId = e.Id.HasValue ? e.Id.Value : Guid.Empty
+                            });
+                        }
                     }
+                    m.PostCategories = postCategories;
                 });
 
             // Category

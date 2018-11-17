@@ -81,5 +81,24 @@ namespace AP.Repositories.Common
             bool exists = _databaseContext.Set<E>().Any(e => e.Id.Equals(entityId));
             return exists;
         }
+
+        public async Task<bool> RemoveRelation<R>(R relation) where R : class
+        {
+            _databaseContext.Set<R>().Remove(relation);
+
+            return _databaseContext.SaveChanges() > 0;
+        }
+
+        public async Task<R> CreateRelation<R>(R relation) where R : class
+        {
+            // Adding value asynchrously
+            var addTask = await _databaseContext.Set<R>().AddAsync(relation);
+            relation = addTask.Entity;
+            
+            // Save added value asynchrously
+            var saveTask = await _databaseContext.SaveChangesAsync();
+
+            return relation;
+        }
     }
 }

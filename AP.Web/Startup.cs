@@ -101,8 +101,8 @@ namespace AP.Web
                 .AllowAnyHeader());
 
             app.UpdateDatabase();
-            //if (env.IsDevelopment())
-            //{
+            if (env.IsDevelopment())
+            {
                 app.UseStaticFiles();
                 // Enable middleware to serve generated Swagger as a JSON endpoint.
                 app.UseSwagger();
@@ -117,11 +117,11 @@ namespace AP.Web
                 });
 
                 app.UseDeveloperExceptionPage();
-            //}
-            //else
-            //{
+            }
+            else
+            {
                 app.UseHsts();
-            //}
+            }
 
             app.UseAuthentication();
             app.UseHttpsRedirection();

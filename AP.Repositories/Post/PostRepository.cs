@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AP.Entities.Options;
 using AP.Repositories.Common;
+using AP.Repositories.Extensions.ConditionExtension;
 using Microsoft.EntityFrameworkCore;
 using Models = AP.Entities.Models;
 
@@ -11,18 +12,6 @@ namespace AP.Repositories.Post
 {
     public class PostRepository : RepositoryBase<Models.Post>, IPostRepository
     {
-        public async Task<IEnumerable<Models.Post>> GetPostsByPagingOptions(PagingOptions pagingOptions)
-        {
-            if(pagingOptions == null)
-                throw new ArgumentNullException(nameof(pagingOptions));
-            
-            pagingOptions.Offset = pagingOptions.Offset ?? 0;
-            pagingOptions.Limit = pagingOptions.Limit ?? 100;
-
-            var posts = _databaseContext.Posts.Skip(pagingOptions.Offset.Value).Take(pagingOptions.Limit.Value).Include(p => p.Author).Include(p => p.PostCategories);
-            return await posts.ToListAsync();
-        }
-
         public async Task<Models.Post> GetPostBySlug(string slug)
         {
             if(string.IsNullOrWhiteSpace(slug))
@@ -50,6 +39,49 @@ namespace AP.Repositories.Post
         public async Task<int> CountAllPosts()
         {
             return await _databaseContext.Posts.CountAsync();
+        }
+
+        public async Task<IEnumerable<Models.Post>> GetPosts()
+        {
+            var posts = _databaseContext.Posts.Include(p => p.Author).Include(p => p.PostCategories);
+            return await posts.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Models.Post>> GetPosts(PagingOptions pagingOptions)
+        {
+            if(pagingOptions == null)
+                throw new ArgumentNullException(nameof(pagingOptions));
+            
+            pagingOptions.Offset = pagingOptions.Offset ?? 0;
+            pagingOptions.Limit = pagingOptions.Limit ?? 100;
+
+            var posts = _databaseContext.Posts.Skip(pagingOptions.Offset.Value).Take(pagingOptions.Limit.Value).Include(p => p.Author).Include(p => p.PostCategories);
+            return await posts.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Models.Post>> GetPosts(Conditions<Models.Post> conditions)
+        {
+            var posts = _databaseContext.Posts.Conditions(conditions).Include(p => p.Author).Include(p => p.PostCategories);
+            return await posts.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Models.Post>> GetPosts(PagingOptions pagingOptions, Conditions<Models.Post> conditions)
+        {
+            if(pagingOptions == null)
+                throw new ArgumentNullException(nameof(pagingOptions));
+            
+            pagingOptions.Offset = pagingOptions.Offset ?? 0;
+            pagingOptions.Limit = pagingOptions.Limit ?? 100;
+
+            var posts = _databaseContext
+                .Posts
+                .Skip(pagingOptions.Offset.Value)
+                .Take(pagingOptions.Limit.Value)
+                .Conditions(conditions)
+                .Include(p => p.Author)
+                .Include(p => p.PostCategories);
+
+            return await posts.ToListAsync();
         }
     }
 }

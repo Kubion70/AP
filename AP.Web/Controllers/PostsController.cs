@@ -49,8 +49,9 @@ namespace AP.Web.Controllers
         [Produces("application/json")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Eager.Post>))]
         [ProducesResponseType(204)] 
-        public async Task<IActionResult> Get([FromQuery] PagingOptions pagingOptions)
+        public async Task<IActionResult> Get([FromQuery] PagingOptions pagingOptions, [FromQuery] Conditions<Models.Post> conditions)
         {
+            conditions.Validate();
             if(pagingOptions == null)
             {
                 pagingOptions = new PagingOptions
@@ -60,7 +61,7 @@ namespace AP.Web.Controllers
                 };
             }
 
-            var posts = await _postRepository.GetPostsByPagingOptions(pagingOptions);
+            var posts = await _postRepository.GetPosts(pagingOptions, conditions);
 
             var mappedPosts = _mapper.Map<IEnumerable<Models.Post>, IEnumerable<Eager.Post>>(posts);
 

@@ -9,12 +9,18 @@ namespace AP.Repositories.Post
 {
     public interface IPostRepository : IRepositoryBase<Models.Post>
     {
-         Task<IEnumerable<Models.Post>> GetPostsByPagingOptions(PagingOptions pagingOptions);
+        Task<IEnumerable<Models.Post>> GetPosts();
+        
+        Task<IEnumerable<Models.Post>> GetPosts(PagingOptions pagingOptions);
 
-         Task<Models.Post> GetPostBySlug(string slug);
+        Task<IEnumerable<Models.Post>> GetPosts(Conditions<Models.Post> conditions);
 
-         Task<Models.Post> GetPostsById(Guid id);
+        Task<IEnumerable<Models.Post>> GetPosts(PagingOptions pagingOptions, Conditions<Models.Post> conditions);
 
-         Task<int> CountAllPosts();
+        Task<Models.Post> GetPostBySlug(string slug);
+
+        Task<Models.Post> GetPostsById(Guid id);
+
+        Task<int> CountAllPosts();
     }
 }

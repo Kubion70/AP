@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Text;
 using System.Net;
 using System;
+using AP.Cryptography;
 
 namespace AP.Tests.Endpoints.Users
 {
@@ -18,7 +19,7 @@ namespace AP.Tests.Endpoints.Users
         Models.User sampleUser = new Models.User
         {
             Username = "putUser",
-            Password = "PutUser12#",
+            Password = SHA.GenerateSHA256String("PutUser12#"),
             Email = "put@user.com"
         };
 

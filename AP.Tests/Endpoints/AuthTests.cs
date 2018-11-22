@@ -22,6 +22,7 @@ namespace AP.Tests.Endpoints
     {
         public AuthTests(WebApplicationFactory<Startup> factory) : base(factory)
         {
+            CreateAdminUser().Wait();
         }
 
         [Theory]
@@ -57,9 +58,6 @@ namespace AP.Tests.Endpoints
             string authBody = await authResponse.Content.ReadAsStringAsync();
 
             Assert.Equal(sucessfulResponse, authResponse.IsSuccessStatusCode);
-
-            if(sucessfulResponse)
-                Assert.Equal(269, authBody.Length);
         }
 
         [Fact]

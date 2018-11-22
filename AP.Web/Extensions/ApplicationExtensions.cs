@@ -19,7 +19,8 @@ namespace AP.Web.Extensions
             {
                 using (var context = serviceScope.ServiceProvider.GetService<DatabaseContext>())
                 {
-                    context.Database.Migrate();
+                    if(!context.Database.IsInMemory())
+                        context.Database.Migrate();
                 }
             }
 

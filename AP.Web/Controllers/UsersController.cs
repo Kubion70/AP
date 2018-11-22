@@ -116,7 +116,10 @@ namespace AP.Web.Controllers
         [ProducesResponseType(401)]
         public async Task<IActionResult> Put([FromBody] Eager.User user)
         {
-            if(!user.Id.HasValue || !_userRepository.Exists(user.Id.Value))
+            if (!user.Id.HasValue)
+                return BadRequest();
+
+            if(!_userRepository.Exists(user.Id.Value))
                 return NoContent();
 
             var userMapped = _mapper.Map<Models.User>(user);

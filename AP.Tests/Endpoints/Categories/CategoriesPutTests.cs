@@ -27,23 +27,29 @@ namespace AP.Tests.Endpoints.Categories
             };
             category = await categoryRepository.Create(category);
 
-            var categroyUpdateModel = new Models.Eager.Category()
-            {
-                Id = category.Id,
-                Name = "PutUpdated"
+            Models.Eager.Category[] categroyUpdateModel = {
+                new Models.Eager.Category()
+                {
+                    Id = category.Id,
+                    Name = "updateContent"
+                }
             };
             var updateContent = new StringContent(JsonConvert.SerializeObject(categroyUpdateModel), Encoding.UTF8, "application/json");
 
-            var categoryWithEmptyId = new Models.Eager.Category()
-            {
-                Name = "PutUpdated"
+            Models.Eager.Category[] categoryWithEmptyId = {
+                new Models.Eager.Category()
+                {
+                    Name = "contentNoId"
+                }
             };
             var contentNoId = new StringContent(JsonConvert.SerializeObject(categoryWithEmptyId), Encoding.UTF8, "application/json");
 
-            var categoryWithWrongId = new Models.Eager.Category()
-            {
-                Id = Guid.NewGuid(),
-                Name = "PutUpdated"
+            Models.Eager.Category[] categoryWithWrongId = {
+                new Models.Eager.Category()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "contentWrongId"
+                }
             };
             var contentWrongId = new StringContent(JsonConvert.SerializeObject(categoryWithWrongId), Encoding.UTF8, "application/json");
 
@@ -51,14 +57,13 @@ namespace AP.Tests.Endpoints.Categories
             var unauthorizedResponse = await DefaultClient.PutAsync($"api/Categories", updateContent);
             Assert.Equal(HttpStatusCode.Unauthorized, unauthorizedResponse.StatusCode);
 
-            var badResponse  = await AuthorizedClient.PutAsync($"api/Categories", contentNoId);
-            Assert.Equal(HttpStatusCode.BadRequest, badResponse.StatusCode);
+            // When no Id create new record
+            var createResponse = await AuthorizedClient.PutAsync($"api/Categories", contentNoId);
+            Assert.Equal(HttpStatusCode.OK, createResponse.StatusCode);
 
-            var noContentResponse = await AuthorizedClient.PutAsync($"api/Categories", contentWrongId);
-            Assert.Equal(HttpStatusCode.NoContent, noContentResponse.StatusCode);
-
-            var response = await AuthorizedClient.PutAsync($"api/Categories", updateContent);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            // When Id is invalid (e.g not found in db)
+            var badRequestResponse = await AuthorizedClient.PutAsync($"api/Categories", contentWrongId);
+            Assert.Equal(HttpStatusCode.BadRequest, badRequestResponse.StatusCode);
         }
     }
 }

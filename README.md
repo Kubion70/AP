@@ -10,7 +10,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 To make this project build and run you need to download and install [.NET Core](https://www.microsoft.com/net/download) with version 2.1 or higher.
 
-(Recommended) This project works well with [Docker](https://www.docker.com/) and I personally recommend to install docker on your machine and run this project with several lines of commands. 
+(Recommended) This project works well with [Docker](https://www.docker.com/) and I personally recommend to install docker on your machine and run this project with several lines of commands.
 
 (Optional) If you are interested in runnning this project even faster you can use our Makefile with [Make](https://www.gnu.org/software/make/)
 
@@ -18,9 +18,9 @@ To make this project build and run you need to download and install [.NET Core](
 
 A step by step series of examples that tell you how to get a development env running. If you want to use docker check out how to run it with docker on our Wiki.
 
-Clone repository 
+Clone repository
 
-```
+```bash
 git clone https://github.com/Kubion70/AP.git
 ```
 
@@ -28,17 +28,17 @@ When you have a copy of repository it's time to setup JwT secret key (needed for
 
 Open terminal and go to the main folder. Run command below to restore projects dependencies and tools.
 
-```
+```bash
 dotnet restore
 ```
 
 To run project (development mode) use this command
 
-```
-dotnet run --project AP.Web
+```bash
+dotnet run -p AP.Web
 ```
 
-When the application will be up and running go to https://localhost:5001/api where  [Swagger](https://swagger.io/) will show you all endpoints.
+When the application will be up and running go to <https://localhost:5001/api> where  [Swagger](https://swagger.io/) will show you all endpoints.
 
 **Remember** that development mode runs with database in memory. What means all stored data clears when the program stops.
 
@@ -46,7 +46,7 @@ When the application will be up and running go to https://localhost:5001/api whe
 
 Our tests are mainly focues on endpoints test (end to end as well). To run it go to the main folder and run following command:
 
-```
+```bash
 dotnet test
 ```
 
@@ -56,31 +56,19 @@ If you have configured the project correctly all tests should bee passed success
 
 Open the DatabaseContext.cs placed in  ./AP.Repositories/Context . Change the connection string to let server connect to MSSQL database. (If your are using different RDBMS you can change the method `UseSqlServer("")` based on [Entity Framework supported databases](https://entityframework.net/supported-database-providers))
 
-```
+```csharp
 optionsBuilder.UseSqlServer("Data Source=IP_ADDRESS;Initial Catalog=DATABASE_NAME;User ID=USERNAME;Password=PASSWORD;");
-```
-
-Use migrations to create actual database structure
-
-```
-ASPNETCORE_ENVIRONMENT=Production dotnet ef migrations add $(date '+%d%m%Y%H') --startup-project AP.Repositories --project AP.Repositories
-```
-
-Update database with generated migrations
-
-```
-ASPNETCORE_ENVIRONMENT=Production dotnet ef database update --startup-project AP.Repositories --project AP.Repositories
 ```
 
 For production mode publish app with
 
-```
+```bash
 dotnet publish AP.Web -c Release
 ```
 
 and to run it use
 
-```
+```bash
 ASPNETCORE_ENVIRONMENT=Production dotnet AP.Web.dll
 ```
 
@@ -89,6 +77,7 @@ ASPNETCORE_ENVIRONMENT=Production dotnet AP.Web.dll
 * [ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/getting-started/?view=aspnetcore-2.1&tabs=linux)
 * [Entity Framework Core](https://docs.microsoft.com/en-us/ef/core/) - ORM
 * [AutoMapper](http://docs.automapper.org/en/stable/index.html) - Entity Mapping
+* [CacheManager](http://cachemanager.michaco.net/) - Cache
 * [XUnit](https://xunit.github.io/) - Unit Testing
 
 ## Authors
@@ -100,4 +89,3 @@ See also the list of [contributors](https://github.com/Kubion70/AP/contributors)
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
-

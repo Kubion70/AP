@@ -1,6 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="2.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\AP.Entities\AP.Entities.csproj" />
     <ProjectReference Include="..\AP.Repositories\AP.Repositories.csproj" />
   </ItemGroup>

@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using System;
 using Models = AP.Entities.Models;
 
 namespace AP.Repositories.Contexts
@@ -25,22 +24,6 @@ namespace AP.Repositories.Contexts
         }
 
         #endregion Ctor
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            var env = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
-            switch(env)
-            {
-                case "Production":
-                    optionsBuilder.UseSqlServer("Data Source=IP_ADDRESS;Initial Catalog=DATABASE_NAME;User ID=USERNAME;Password=PASSWORD;");
-                    break;
-                default: case "Development":
-                    optionsBuilder.UseInMemoryDatabase(databaseName: "TestDB");
-                    break;
-            }
-
-            base.OnConfiguring(optionsBuilder);
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -12,10 +12,10 @@ using AutoMapper;
 using System.Collections.Generic;
 using AP.Validators.Post;
 using AP.Repositories.Category;
-using System.ComponentModel.DataAnnotations;
 using AP.Entities.Enums;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Http;
+using System.Text;
 
 namespace AP.Web.Controllers
 {
@@ -49,7 +49,7 @@ namespace AP.Web.Controllers
         [Produces("application/json")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Eager.Post>))]
         [ProducesResponseType(204)] 
-        public async Task<IActionResult> Get([FromQuery] PagingOptions pagingOptions, [FromQuery] Conditions<Models.Post> conditions)
+        public async Task<IActionResult> Get([FromQuery] PagingOptions pagingOptions, [FromQuery(Name = "conditions")] Conditions<Models.Post> conditions)
         {
             conditions.Validate();
             if(pagingOptions == null)
@@ -317,9 +317,10 @@ namespace AP.Web.Controllers
         } 
 
         private string RemoveAccent(string txt) 
-        { 
-            byte[] bytes = System.Text.Encoding.GetEncoding("Cyrillic").GetBytes(txt); 
-            return System.Text.Encoding.ASCII.GetString(bytes); 
+        {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            byte[] bytes = Encoding.GetEncoding("Cyrillic").GetBytes(txt); 
+            return Encoding.ASCII.GetString(bytes); 
         }
     }
 }

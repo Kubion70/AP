@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 
 namespace AP.Entities.Options
 {
-    public class Conditions<TEntity> : Dictionary<string, string[]> where TEntity : class
+    public class Conditions<TEntity> : Dictionary<string, string[]> where TEntity : Entity
     {
         public void Validate()
         {
@@ -37,12 +37,38 @@ namespace AP.Entities.Options
 
             var prop = typeof(TEntity).GetProperty(key);
 
-            if(prop == null)
-                throw new PropertyNotFoundException(key);
-
-            foreach(string value in values) {
-                var converter = TypeDescriptor.GetConverter(prop.PropertyType);
-                converter.ConvertFromInvariantString(value);
+            if (prop == null)
+            {
+                var properties = typeof(TEntity).GetProperties().Where(p => p.PropertyType.IsGenericType);
+                foreach (var test in properties)
+                {
+                    var val = typeof(TEntity).GetProperty(test.Name).PropertyType.GetGenericArguments()[0];
+                }
+                var relationalProp = typeof(TEntity)
+                    .GetProperties()
+                    .Where(p => p.PropertyType.IsGenericType && p.PropertyType.GetGenericArguments()[0].GetProperty(key) != null)
+                    .Select(p => p.PropertyType.GetGenericArguments()[0].GetProperty(key))
+                    .FirstOrDefault();
+                if (relationalProp == null)
+                {
+                    throw new PropertyNotFoundException(key);
+                }
+                else
+                {
+                    foreach (string value in values)
+                    {
+                        var converter = TypeDescriptor.GetConverter(relationalProp.PropertyType);
+                        converter.ConvertFrom(value);
+                    }
+                }
+            }
+            else
+            {
+                foreach (string value in values)
+                {
+                    var converter = TypeDescriptor.GetConverter(prop.PropertyType);
+                    converter.ConvertFromInvariantString(value);
+                }
             }
         }
 
@@ -54,6 +80,8 @@ namespace AP.Entities.Options
             return char.ToUpper(s[0]) + s.Substring(1);
         }
     }
+
+    #region PropertyNotFoundException
 
     public class PropertyNotFoundException : Exception
     {
@@ -73,4 +101,6 @@ namespace AP.Entities.Options
         {
         }
     }
+
+    #endregion PropertyNotFoundException
 }

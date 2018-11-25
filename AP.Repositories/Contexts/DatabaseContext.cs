@@ -13,6 +13,12 @@ namespace AP.Repositories.Contexts
 
         #endregion Entities
 
+        #region Relations
+
+        public DbSet<Models.PostCategory> PostsCategories { get; set; }
+
+        #endregion Relations
+
         #region Ctor
 
         public DatabaseContext()

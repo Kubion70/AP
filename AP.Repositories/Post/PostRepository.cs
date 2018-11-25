@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AP.Entities.Options;
 using AP.Repositories.Common;
+using AP.Repositories.Contexts;
 using AP.Repositories.Extensions.ConditionExtension;
 using Microsoft.EntityFrameworkCore;
 using Models = AP.Entities.Models;
@@ -12,6 +13,10 @@ namespace AP.Repositories.Post
 {
     public class PostRepository : RepositoryBase<Models.Post>, IPostRepository
     {
+        public PostRepository(DatabaseContext databaseContext) : base(databaseContext)
+        {
+        }
+
         public async Task<Models.Post> GetPostBySlug(string slug)
         {
             if(string.IsNullOrWhiteSpace(slug))
@@ -61,7 +66,7 @@ namespace AP.Repositories.Post
 
         public async Task<IEnumerable<Models.Post>> GetPosts(Conditions<Models.Post> conditions)
         {
-            var posts = _databaseContext.Posts.Conditions(conditions).Include(p => p.Author).Include(p => p.PostCategories);
+            var posts = _databaseContext.Posts.Include(p => p.Author).Include(p => p.PostCategories).Conditions(conditions, _databaseContext);
             return await posts.ToListAsync();
         }
 
@@ -75,11 +80,11 @@ namespace AP.Repositories.Post
 
             var posts = _databaseContext
                 .Posts
-                .Skip(pagingOptions.Offset.Value)
-                .Take(pagingOptions.Limit.Value)
-                .Conditions(conditions)
                 .Include(p => p.Author)
-                .Include(p => p.PostCategories);
+                .Include(p => p.PostCategories)
+                .Conditions(conditions, _databaseContext)
+                .Skip(pagingOptions.Offset.Value)
+                .Take(pagingOptions.Limit.Value);
 
             return await posts.ToListAsync();
         }

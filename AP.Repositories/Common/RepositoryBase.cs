@@ -11,9 +11,9 @@ namespace AP.Repositories.Common
     {
         internal DatabaseContext _databaseContext;
 
-        protected RepositoryBase()
+        protected RepositoryBase(DatabaseContext databaseContext)
         {
-            _databaseContext = new DatabaseContext();
+            _databaseContext = databaseContext;
         }
 
         /// <summary>

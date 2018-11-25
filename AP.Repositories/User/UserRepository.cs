@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AP.Repositories.Common;
+using AP.Repositories.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Models = AP.Entities.Models;
 
@@ -10,6 +11,10 @@ namespace AP.Repositories.User
 {
     public class UserRepository : RepositoryBase<Models.User>, IUserRepository
     {
+        public UserRepository(DatabaseContext databaseContext) : base(databaseContext)
+        {
+        }
+
         public async Task<IEnumerable<Models.User>> GetAllUsers()
         {
             var users = await _databaseContext.Users.ToListAsync();

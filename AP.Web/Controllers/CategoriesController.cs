@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using AP.Entities.Enums;
+using AP.Entities.Options;
 using AP.Repositories.Category;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -32,9 +33,9 @@ namespace AP.Web.Controllers
         [Produces("application/json")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Eager.Category>))]
         [ProducesResponseType(204)]
-        public async Task<IActionResult> Get()
+        public async Task<IActionResult> Get([FromQuery(Name = "conditions")] Conditions<Models.Category> conditions)
         {
-            var categories = await _categoryRepository.GetAllCategories();
+            var categories = await _categoryRepository.GetCategoriesWithConditions(conditions);
 
             if(categories == null || !categories.Any())
                 return NoContent();

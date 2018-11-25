@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AP.Entities.Options;
 using AP.Repositories.Common;
+using AP.Repositories.Contexts;
+using AP.Repositories.Extensions.ConditionExtension;
 using Microsoft.EntityFrameworkCore;
 using Models = AP.Entities.Models;
 
@@ -10,9 +13,18 @@ namespace AP.Repositories.Category
 {
     public class CategoryRepository : RepositoryBase<Models.Category>, ICategoryRepository
     {
+        public CategoryRepository(DatabaseContext databaseContext) : base(databaseContext)
+        {
+        }
+
         public async Task<IEnumerable<Models.Category>> GetAllCategories()
         {
             return await _databaseContext.Categories.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Models.Category>> GetCategoriesWithConditions(Conditions<Models.Category> conditions)
+        {
+            return await _databaseContext.Categories.Include(c => c.PostCategories).Conditions(conditions, _databaseContext).ToListAsync();
         }
 
         public async Task<bool> MassCategoriesUpdate(IEnumerable<Models.Category> categories)

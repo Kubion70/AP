@@ -42,6 +42,13 @@ When the application will be up and running go to <https://localhost:5001/api> w
 
 **Remember** that development mode runs with database in memory. What means all stored data clears when the program stops.
 
+Default authentication credentials for development mode are:
+
+```text
+Username: Admin
+Passowrd: admin
+```
+
 ## Running the tests
 
 Our tests are mainly focues on endpoints test (end to end as well). To run it go to the main folder and run following command:
@@ -54,12 +61,6 @@ If you have configured the project correctly all tests should bee passed success
 
 ## Deployment
 
-Open the DatabaseContext.cs placed in  ./AP.Repositories/Context . Change the connection string to let server connect to MSSQL database. (If your are using different RDBMS you can change the method `UseSqlServer("")` based on [Entity Framework supported databases](https://entityframework.net/supported-database-providers))
-
-```csharp
-optionsBuilder.UseSqlServer("Data Source=IP_ADDRESS;Initial Catalog=DATABASE_NAME;User ID=USERNAME;Password=PASSWORD;");
-```
-
 For production mode publish app with
 
 ```bash
@@ -71,6 +72,8 @@ and to run it use
 ```bash
 ASPNETCORE_ENVIRONMENT=Production dotnet AP.Web.dll
 ```
+
+If this is first run of application run open your browser and go to `/api` path of your website URL and follow the graphical configuration. After configuration **remember** to restart the application.
 
 ## Built With
 

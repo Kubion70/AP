@@ -88,5 +88,16 @@ namespace AP.Repositories.Post
 
             return await posts.ToListAsync();
         }
+
+        public async Task<int> GetPostsVisitsSum(Conditions<Models.Post> conditions)
+        {
+            return await _databaseContext
+                .Posts
+                .Include(p => p.Author)
+                .Include(p => p.PostCategories)
+                .Conditions(conditions, _databaseContext)
+                .Select(p => p.Visits)
+                .SumAsync();
+        }
     }
 }

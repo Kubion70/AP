@@ -46,6 +46,8 @@ namespace AP.Entities.Models
         public DateTime CreatedOn { get; set; }
 
         public DateTime? ModifiedOn { get; set; }
+
+        public int Visits { get; set; }
     }
 
     namespace Eager
@@ -74,6 +76,8 @@ namespace AP.Entities.Models
             public DateTime CreatedOn { get; internal set; }
 
             public DateTime? ModifiedOn { get; internal set; }
+
+            public int Visits { get; internal set; }
         }
     }
 }

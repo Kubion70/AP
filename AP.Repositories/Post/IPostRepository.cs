@@ -22,5 +22,7 @@ namespace AP.Repositories.Post
         Task<Models.Post> GetPostsById(Guid id);
 
         Task<int> CountAllPosts();
+
+        Task<int> GetPostsVisitsSum(Conditions<Models.Post> conditions);
     }
 }

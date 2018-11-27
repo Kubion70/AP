@@ -98,6 +98,9 @@ namespace AP.Web.Controllers
 
             var post = await _postRepository.GetPostBySlug(slug);
 
+            post.Visits++;
+            post = await _postRepository.Update(post);
+
             var mappedPost = _mapper.Map<Eager.Post>(post);
 
             return mappedPost == null ? NoContent() : (IActionResult)new JsonResult(mappedPost);
@@ -188,6 +191,18 @@ namespace AP.Web.Controllers
             return new JsonResult(user);
         }
 
+        /// <summary>
+        /// Get all posts visits sum
+        /// </summary>
+        [HttpGet("visits")]
+        [Authorize]
+        [ProducesResponseType(200, Type = typeof(int))]
+        public async Task<IActionResult> GetVisitsSum([FromQuery(Name = "conditions")] Conditions<Models.Post> conditions)
+        {
+            int sumOfVisits = await _postRepository.GetPostsVisitsSum(conditions);
+            return Ok(sumOfVisits);
+        }
+
         #endregion GET
 
         #region POST
@@ -215,6 +230,7 @@ namespace AP.Web.Controllers
             }
             else
             {
+                postMapped.Visits = 0;
                 postMapped.CreatedOn = DateTime.Now;
                 postMapped.ModifiedOn = null;
                 postMapped.Slug = GenerateSlug(postMapped.Title);
@@ -262,14 +278,15 @@ namespace AP.Web.Controllers
                 foreach (var relation in dbPost.PostCategories.ToList())
                 {
                     if(!postMapped.PostCategories.Any(pc => pc.PostId.Equals(relation.PostId) && pc.CategoryId.Equals(relation.CategoryId)))
-                        await _postRepository.RemoveRelation<Models.PostCategory>(relation);
+                        await _postRepository.RemoveRelation(relation);
                 }
                 foreach (var relation in postMapped.PostCategories)
                 {
                     if(!dbPost.PostCategories.Any(pc => pc.PostId.Equals(relation.PostId) && pc.CategoryId.Equals(relation.CategoryId)))
-                        await _postRepository.CreateRelation<Models.PostCategory>(relation);
+                        await _postRepository.CreateRelation(relation);
                 }
 
+                postMapped.Visits = dbPost.Visits;
                 postMapped.CreatedOn = dbPost.CreatedOn;
                 postMapped.ModifiedOn = DateTime.Now;
                 postMapped.Slug = GenerateSlug(postMapped.Title);

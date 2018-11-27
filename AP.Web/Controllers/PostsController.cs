@@ -49,7 +49,7 @@ namespace AP.Web.Controllers
         [Produces("application/json")]
         [ProducesResponseType(200, Type = typeof(IEnumerable<Eager.Post>))]
         [ProducesResponseType(204)] 
-        public async Task<IActionResult> Get([FromQuery] PagingOptions pagingOptions, [FromQuery(Name = "conditions")] Conditions<Models.Post> conditions)
+        public async Task<IActionResult> Get([FromQuery] PagingOptions pagingOptions, [FromQuery(Name = "search")] string searchingPhrase, [FromQuery(Name = "conditions")] Conditions<Models.Post> conditions)
         {
             conditions.Validate();
             if(pagingOptions == null)
@@ -61,7 +61,9 @@ namespace AP.Web.Controllers
                 };
             }
 
-            var posts = await _postRepository.GetPosts(pagingOptions, conditions);
+            var posts = string.IsNullOrWhiteSpace(searchingPhrase)
+                ? await _postRepository.GetPosts(pagingOptions, conditions)
+                : await _postRepository.GetPosts(pagingOptions, conditions, searchingPhrase);
 
             var mappedPosts = _mapper.Map<IEnumerable<Models.Post>, IEnumerable<Eager.Post>>(posts);
 

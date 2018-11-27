@@ -99,5 +99,31 @@ namespace AP.Repositories.Post
                 .Select(p => p.Visits)
                 .SumAsync();
         }
+
+        public async Task<IEnumerable<Models.Post>> GetPosts(PagingOptions pagingOptions, Conditions<Models.Post> conditions, string searchString = null)
+        {
+            if (pagingOptions == null)
+                throw new ArgumentNullException(nameof(pagingOptions));
+
+            pagingOptions.Offset = pagingOptions.Offset ?? 0;
+            pagingOptions.Limit = pagingOptions.Limit ?? 100;
+
+            var posts = _databaseContext
+                .Posts
+                .Include(p => p.Author)
+                .Include(p => p.PostCategories)
+                .Conditions(conditions, _databaseContext);
+
+            // Posts search
+            if(!string.IsNullOrWhiteSpace(searchString))
+            {
+                posts = posts.Where(p => p.Title.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0 || p.Content.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0);
+            }
+
+            // Posts pagination
+            posts = posts.Skip(pagingOptions.Offset.Value).Take(pagingOptions.Limit.Value);
+
+            return await posts.ToListAsync();
+        }
     }
 }

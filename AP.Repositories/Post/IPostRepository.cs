@@ -17,6 +17,8 @@ namespace AP.Repositories.Post
 
         Task<IEnumerable<Models.Post>> GetPosts(PagingOptions pagingOptions, Conditions<Models.Post> conditions);
 
+        Task<IEnumerable<Models.Post>> GetPosts(PagingOptions pagingOptions, Conditions<Models.Post> conditions, string searchString = null);
+
         Task<Models.Post> GetPostBySlug(string slug);
 
         Task<Models.Post> GetPostsById(Guid id);

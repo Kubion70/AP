@@ -17,13 +17,13 @@ namespace AP.Repositories.Post
 
         Task<IEnumerable<Models.Post>> GetPosts(PagingOptions pagingOptions, Conditions<Models.Post> conditions);
 
-        Task<IEnumerable<Models.Post>> GetPosts(PagingOptions pagingOptions, Conditions<Models.Post> conditions, string searchString = null);
+        Task<IEnumerable<Models.Post>> GetPosts(PagingOptions pagingOptions, Conditions<Models.Post> conditions, string searchString = null, bool onlyAvailablePosts = true);
 
         Task<Models.Post> GetPostBySlug(string slug);
 
         Task<Models.Post> GetPostsById(Guid id);
 
-        Task<int> CountAllPosts();
+        Task<int> CountAllPosts(bool onlyAvailablePosts = true);
 
         Task<int> GetPostsVisitsSum(Conditions<Models.Post> conditions);
     }

@@ -41,9 +41,13 @@ namespace AP.Repositories.Post
             return post;
         }
 
-        public async Task<int> CountAllPosts()
+        public async Task<int> CountAllPosts(bool onlyAvailablePosts = true)
         {
-            return await _databaseContext.Posts.CountAsync();
+            var posts = onlyAvailablePosts
+                ? _databaseContext.Posts.Where(p => p.Publish && (!p.PublishDate.HasValue || p.PublishDate.Value.CompareTo(DateTime.Now) <= 0))
+                : _databaseContext.Posts;
+
+            return await posts.CountAsync();
         }
 
         public async Task<IEnumerable<Models.Post>> GetPosts()
@@ -100,7 +104,7 @@ namespace AP.Repositories.Post
                 .SumAsync();
         }
 
-        public async Task<IEnumerable<Models.Post>> GetPosts(PagingOptions pagingOptions, Conditions<Models.Post> conditions, string searchString = null)
+        public async Task<IEnumerable<Models.Post>> GetPosts(PagingOptions pagingOptions, Conditions<Models.Post> conditions, string searchString = null, bool onlyAvailablePosts = true)
         {
             if (pagingOptions == null)
                 throw new ArgumentNullException(nameof(pagingOptions));
@@ -118,6 +122,11 @@ namespace AP.Repositories.Post
             if(!string.IsNullOrWhiteSpace(searchString))
             {
                 posts = posts.Where(p => p.Title.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0 || p.Content.IndexOf(searchString, StringComparison.OrdinalIgnoreCase) >= 0);
+            }
+
+            if(onlyAvailablePosts)
+            {
+                posts = posts.Where(p => p.Publish && (!p.PublishDate.HasValue || p.PublishDate.Value.CompareTo(DateTime.Now) <= 0));
             }
 
             // Posts pagination

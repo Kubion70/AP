@@ -42,7 +42,8 @@ namespace AP.Web.Controllers
         /// Returns posts
         /// </summary>
         /// <remarks>
-        /// Returns limited number of posts.async By default (no parameters) you will get last 100 posts (ordered by date ascending)
+        /// Returns limited number of posts. By default (no parameters) you will get last 100 posts (ordered by date ascending)
+        /// If request is not authenticated in response you will not see unpublished and futured posts
         /// </remarks>
         [HttpGet]
         [AllowAnonymous]
@@ -61,9 +62,7 @@ namespace AP.Web.Controllers
                 };
             }
 
-            var posts = string.IsNullOrWhiteSpace(searchingPhrase)
-                ? await _postRepository.GetPosts(pagingOptions, conditions)
-                : await _postRepository.GetPosts(pagingOptions, conditions, searchingPhrase);
+            var posts = await _postRepository.GetPosts(pagingOptions, conditions, searchingPhrase, !User.Identity.IsAuthenticated);
 
             var mappedPosts = _mapper.Map<IEnumerable<Models.Post>, IEnumerable<Eager.Post>>(posts);
 
@@ -75,7 +74,7 @@ namespace AP.Web.Controllers
             {
                 var result = Ok(mappedPosts);
 
-                Response.Headers.Add("X-Total-Count", _postRepository.CountAllPosts().Result.ToString());
+                Response.Headers.Add("X-Total-Count", _postRepository.CountAllPosts(!User.Identity.IsAuthenticated).Result.ToString());
                 
                 return result;
             }
@@ -100,6 +99,11 @@ namespace AP.Web.Controllers
 
             var post = await _postRepository.GetPostBySlug(slug);
 
+            if (!User.Identity.IsAuthenticated && (!post.Publish || (post.PublishDate.HasValue && post.PublishDate.Value < DateTime.Now)))
+            {
+                return NoContent();
+            }
+
             post.Visits++;
             post = await _postRepository.Update(post);
 
@@ -113,7 +117,7 @@ namespace AP.Web.Controllers
         /// </summary>
         /// <param name="id">Post unique identifier</param>
         [HttpGet("{id:guid}")]
-        [AllowAnonymous]
+        [Authorize]
         [Produces("application/json")]
         [ProducesResponseType(200, Type = typeof(Eager.Post))]
         [ProducesResponseType(204)]

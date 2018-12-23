@@ -1,0 +1,63 @@
+﻿@model AP.Web.Controllers.ConfigModel
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AP Configuration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.2/css/bulma.min.css">
+</head>
+<body>
+    <section class="section">
+        <div class="container">
+            <h1 class="title">
+                AP Configuration
+            </h1>
+            <p class="subtitle">
+                Before you can use the blog API you need to pass the simple configuration.
+            </p>
+            <form asp-action="Index" method="post">
+                <div class="box">
+                    <p class="is-size-5">1. Database configuration</p>
+                    <br />
+                    <div class="field">
+                        <label class="label">Connection String</label>
+                        <div class="control">
+                            <input asp-for="ConnectionString" name="ConnectionString" class="input" type="text" placeholder="Data Source=IP_ADDRESS;Initial Catalog=DATABASE_NAME;User ID=USERNAME;Password=PASSWORD;" value="@Model.ConnectionString">
+                        </div>
+                        <p class="help is-danger">@Html.ValidationMessageFor(m => m.ConnectionString)</p>
+                    </div>
+                    <p>First step is to set connection string to your Microsoft SQL Server. If you don't know how to create such connection string follow this <strong><a target="_blank" href="https://www.connectionstrings.com/sql-server/">LINK</a></strong></p>
+                </div>
+                <div class="box">
+                    <p class="is-size-5">2. Admin user</p>
+                    <br />
+                    <div class="field">
+                        <label class="label">Username</label>
+                        <p class="control is-expanded">
+                            <input asp-for="Username" name="Username" class="input" type="text" value="@Model.Username">
+                        </p>
+                        <p class="help is-danger">@Html.ValidationMessageFor(m => m.Username)</p>
+                    </div>
+                    <div class="field">
+                        <label class="label">Password</label>
+                        <p class="control is-expanded">
+                            <input asp-for="Passowrd" name="Password" class="input" type="password" value="@Model.Password">
+                        </p>
+                        <p class="help is-danger">@Html.ValidationMessageFor(m => m.Password)</p>
+                    </div>
+                    <div class="field">
+                        <label class="label">Email</label>
+                        <p class="control is-expanded">
+                            <input asp-for="Email" name="Email" class="input" type="email" value="@Model.Email">
+                        </p>
+                        <p class="help is-danger">@Html.ValidationMessageFor(m => m.Email)</p>
+                    </div>
+                </div>
+                <button type="submit" class="button is-link is-outlined is-large is-fullwidth">Validate & Save</button>
+            </form>
+        </div>
+    </section>
+</body>
+</html>

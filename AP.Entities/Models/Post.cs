@@ -20,67 +20,64 @@ namespace AP.Entities.Models
         #endregion Ctor
 
         [Required]
+        [Range(0, 100)]
         public string Title { get; set; }
 
         [Required]
+        [Range(0, 7000)]
         public string Content { get; set; }
 
         [Required]
+        [Range(0, 35)]
         public string Slug { get; set; }
 
+        public string ImageUri { get; set; }
+
         [Required]
-        public SystemUser Author { get; set; }
+        public User Author { get; set; }
 
         [Required]
         public bool Publish { get; set; }
 
-        public DateTime PublishDate { get; set; }
+        public DateTime? PublishDate { get; set; }
 
-        public IEnumerable<Category> Categories { get; set; }
+        public virtual IEnumerable<PostCategory> PostCategories { get; set; }
 
-        [Required, DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime CreatedOn { get; }
-
-        [Required]
-        public SystemUser CreatedBy { get; internal set; }
+        public DateTime CreatedOn { get; set; }
 
         public DateTime? ModifiedOn { get; set; }
 
-        public SystemUser ModifiedBy { get; set; }
+        public int Visits { get; set; }
     }
 
     namespace Eager
     {
         public class Post
         {
-            public Guid Id { get; set; }
+            // Required only for PUT and DELETE operations
+            public Guid? Id { get; set; }
 
-            [Required]
             public string Title { get; set; }
 
-            [Required]
             public string Content { get; set; }
 
-            [Required]
             public string Slug { get; set; }
 
-            [Required]
+            public string ImageUri { get; set; }
+
             public Guid Author { get; set; }
 
-            [Required]
             public bool Publish { get; set; }
 
-            public DateTime PublishDate { get; set; }
+            public DateTime? PublishDate { get; set; }
 
             public IEnumerable<Guid> Categories { get; set; }
 
             public DateTime CreatedOn { get; internal set; }
 
-            public Guid CreatedBy { get; internal set; }
-
             public DateTime? ModifiedOn { get; internal set; }
 
-            public Guid ModifiedBy { get; internal set; }
+            public int Visits { get; internal set; }
         }
     }
 }

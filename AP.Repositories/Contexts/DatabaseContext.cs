@@ -1,5 +1,4 @@
 using Microsoft.EntityFrameworkCore;
-using System;
 using Models = AP.Entities.Models;
 
 namespace AP.Repositories.Contexts
@@ -8,11 +7,17 @@ namespace AP.Repositories.Contexts
     {
         #region Entities
 
-        public DbSet<Models.SystemUser> SystemUsers { get; set; }
+        public DbSet<Models.User> Users { get; set; }
         public DbSet<Models.Category> Categories { get; set; }
         public DbSet<Models.Post> Posts { get; set; }
 
         #endregion Entities
+
+        #region Relations
+
+        public DbSet<Models.PostCategory> PostsCategories { get; set; }
+
+        #endregion Relations
 
         #region Ctor
 
@@ -26,11 +31,22 @@ namespace AP.Repositories.Contexts
 
         #endregion Ctor
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            optionsBuilder.UseSqlServer("Data Source=xxx.xx.x.x;Initial Catalog=DbName;User ID=sa;Password=strongPassword123;");
+            modelBuilder.Entity<Models.PostCategory>()
+                .HasKey(pc => new { pc.PostId, pc.CategoryId });
 
-            base.OnConfiguring(optionsBuilder);
+            modelBuilder.Entity<Models.PostCategory>()
+                .HasOne(pc => pc.Post)
+                .WithMany(p => p.PostCategories)
+                .HasForeignKey(pc => pc.PostId);
+
+            modelBuilder.Entity<Models.PostCategory>()
+                .HasOne(pc => pc.Category)
+                .WithMany(c => c.PostCategories)
+                .HasForeignKey(pc => pc.CategoryId);
+
+            base.OnModelCreating(modelBuilder);
         }
     }
 }
